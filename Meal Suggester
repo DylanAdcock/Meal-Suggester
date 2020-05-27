@@ -1,0 +1,620 @@
+"""
+This program is coded on Python, and required the Pandas and Random library. It also requires an excel workbook named
+"food_bank" which should be saved in the same file as the code.
+"""
+
+
+import random
+import pandas as pd
+
+
+def main():
+    print("Welcome to the Meal Suggester!!!")
+    print("""
+       What would you like to do?
+           1) Create a random plate of food
+           2) Plan a week's food
+           3) Optimized meal plan
+           4) See some restaurant ideas""")
+    choice1 = int(input())
+    if choice1 == 1:
+        print("You have chosen to create a random plate of food.")
+        get_plate()
+    elif choice1 == 2:
+        print("You have chosen to create a whole weeks food.")
+        week_plan()
+    elif choice1 == 3:
+        print("You have chosen to view a optimized plate. This uses a random item in the top 5 of the excel spreadsheet.")
+        optimize()
+    elif choice1 == 4:
+        print("You have chosen to view a random restaurant idea - how cheeky of you!")
+        generate_restaurant()
+    else:
+        print("You have entered an invalid input, shame on you!")
+
+
+
+def get_plate():
+    df_proteins = pd.read_excel('food_bank.xlsx', sheet_name='proteins')           #  used to import from excel sheet
+    protein_list = df_proteins["Item"].tolist()
+
+    df_proteins_b = pd.read_excel('food_bank.xlsx', sheet_name='proteins_b')
+    protein_b_list = df_proteins_b["Item"].tolist()
+
+    df_veggies = pd.read_excel('food_bank.xlsx', sheet_name='veggies')
+    veggies_list = df_veggies["Item"].tolist()
+
+    df_veggies_b = pd.read_excel('food_bank.xlsx', sheet_name='veggies_b')
+    veggies_b_list = df_veggies_b["Item"].tolist()
+
+    df_carbs = pd.read_excel('food_bank.xlsx', sheet_name='carbs')
+    carbs_list = df_carbs["Item"].tolist()
+
+    df_carbs_b = pd.read_excel('food_bank.xlsx', sheet_name='carbs_b')
+    carbs_b_list = df_carbs_b["Item"].tolist()
+
+    df_made_meals = pd.read_excel('food_bank.xlsx', sheet_name='made_meals')
+    made_meals_list = df_made_meals["Item"].tolist()
+
+    df_made_meals_b = pd.read_excel('food_bank.xlsx', sheet_name='made_meals_b')
+    made_meals_list_b = df_made_meals_b["Item"].tolist()
+
+    df_flavor = pd.read_excel('food_bank.xlsx', sheet_name='flavor')
+    flavor_list = df_flavor.values.tolist()
+
+    def suggest_breakfast():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:                  #  used to randomise between made meals and full plates
+            meat = str(random.choice(protein_b_list))
+            veg = str(random.choice(veggies_b_list))
+            carb = str(random.choice(carbs_b_list))
+            print("You could try " + meat + " with " + veg + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list_b))
+            print("You could have " + random_meal)
+
+    def suggest_lunch():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:
+            meat = str(random.choice(protein_list))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list))
+            veg = str(random.choice(veggies_b_list))
+            print("You could have " + random_meal + " and some " + veg)
+
+    def suggest_dinner():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:
+            meat = str(random.choice(protein_list))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list))
+            veg = str(random.choice(veggies_b_list))
+            print("You could have " + random_meal + " and some " + veg)
+
+    print("""
+        What meal would you like?
+            1) Breakfast
+            2) Lunch
+            3) Dinner
+        """)
+    choice2 = int(input())
+    if choice2 == 1:
+        print("You have chosen Breakfast.")
+        suggest_breakfast()
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":                                                                  #  used to create loop for new suggestions
+            print("")
+            suggest_breakfast()
+            redo = input("Would you like a different suggestion? (y/n) ")
+    elif choice2 == 2:
+        print("You chosen Lunch.")
+        suggest_lunch()
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            suggest_lunch()
+            redo = input("Would you like a different suggestion? (y/n) ")
+    elif choice2 == 3:
+        print("You have chosen Dinner.")
+        suggest_dinner()
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            suggest_dinner()
+            redo = input("Would you like a different suggestion? (y/n) ")
+    else:
+        print("You have entered invalid input!")
+
+
+
+
+def week_plan():
+    df_proteins = pd.read_excel('food_bank.xlsx', sheet_name='proteins')  # used to import from excel sheet
+    protein_list = df_proteins["Item"].tolist()
+
+    df_proteins_b = pd.read_excel('food_bank.xlsx', sheet_name='proteins_b')
+    protein_b_list = df_proteins_b["Item"].tolist()
+
+    df_veggies = pd.read_excel('food_bank.xlsx', sheet_name='veggies')
+    veggies_list = df_veggies["Item"].tolist()
+
+    df_veggies_b = pd.read_excel('food_bank.xlsx', sheet_name='veggies_b')
+    veggies_b_list = df_veggies_b["Item"].tolist()
+
+    df_carbs = pd.read_excel('food_bank.xlsx', sheet_name='carbs')
+    carbs_list = df_carbs["Item"].tolist()
+
+    df_carbs_b = pd.read_excel('food_bank.xlsx', sheet_name='carbs_b')
+    carbs_b_list = df_carbs_b["Item"].tolist()
+
+    df_made_meals = pd.read_excel('food_bank.xlsx', sheet_name='made_meals')
+    made_meals_list = df_made_meals["Item"].tolist()
+
+    df_made_meals_b = pd.read_excel('food_bank.xlsx', sheet_name='made_meals_b')
+    made_meals_list_b = df_made_meals_b["Item"].tolist()
+
+    df_flavor = pd.read_excel('food_bank.xlsx', sheet_name='flavor')
+    flavor_list = df_flavor.values.tolist()
+
+    def suggest_breakfast():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:  # used to randomise between made meals and full plates
+            meat = str(random.choice(protein_b_list))
+            veg = str(random.choice(veggies_b_list))
+            carb = str(random.choice(carbs_b_list))
+            print("You could try " + meat + " with " + veg + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list_b))
+            print("You could have " + random_meal)
+
+    def suggest_lunch():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:
+            meat = str(random.choice(protein_list))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list))
+            veg = str(random.choice(veggies_b_list))
+            print("You could have " + random_meal + " and some " + veg)
+
+    def suggest_dinner():
+        random_choice = random.randint(1, 4)
+        if random_choice == 2 or random_choice == 3 or random_choice == 4:
+            meat = str(random.choice(protein_list))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+        else:
+            random_meal = str(random.choice(made_meals_list))
+            veg = str(random.choice(veggies_b_list))
+            print("You could have " + random_meal + " and some " + veg)
+
+    print("You have chosen to see a whole weeks plan for food ideas!")
+    print("""
+           What type of meal would you like so see?
+               1) Breakfasts
+               2) Lunches
+               3) Dinner
+               4) Show me all meals for 7 days
+           """)
+    choice = int(input())
+    if choice == 1:
+        print("You have chosen to see a weeks full of Breakfasts!")
+        for i in range(7):
+            print("Day: " + str(i+1))
+            suggest_breakfast()
+            print("")
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            for i in range(7):
+                print("Day: " + str(i+1))
+                suggest_breakfast()
+                print("")
+            redo = input("Would you like a different suggestion? (y/n) ")
+    elif choice == 2:
+        print("You have chosen to see a weeks full of Lunches!")
+        for i in range(7):
+            print("Day: " + str(i+1))
+            suggest_lunch()
+            print("")
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            for i in range(7):
+                print("Day: " + str(i+1))
+                suggest_lunch()
+                print("")
+            redo = input("Would you like a different suggestion? (y/n) ")
+    elif choice == 3:
+        print("You have chosen to see a weeks full of Dinners!")
+        for i in range(7):
+            print("Day: " + str(i+1))
+            suggest_dinner()
+            print("")
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            for i in range(7):
+                print("Day: " + str(i+1))
+                suggest_dinner()
+                print("")
+            redo = input("Would you like a different suggestion? (y/n) ")
+    elif choice == 4:
+        print("You have chosen to see a whole weeks worth of total food!")
+        for i in range(7):
+            print("Day: " + str(i + 1))
+            print("Breakfast:")
+            suggest_breakfast()
+            print("Lunch:")
+            suggest_lunch()
+            print("Dinner:")
+            suggest_dinner()
+            print("")
+        redo = input("Would you like a different suggestion? (y/n) ")
+        print("")
+        while redo == "y":
+            print("")
+            for i in range(7):
+                print("Day: " + str(i+1))
+                print("Breakfast:")
+                suggest_breakfast()
+                print("Lunch:")
+                suggest_lunch()
+                print("Dinner:")
+                suggest_dinner()
+                print("")
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+    else:
+        print("You have chosen an invalid input")
+
+def optimize():
+
+    def optimize_health():
+        df_proteins = pd.read_excel('food_bank.xlsx', sheet_name='proteins')  # used to import from excel sheet
+        df_proteins = df_proteins.sort_values("Health", ascending=False)
+        protein_list = df_proteins.reset_index
+        protein_list = df_proteins["Item"].tolist()
+
+        df_proteins_b = pd.read_excel('food_bank.xlsx', sheet_name='proteins_b')
+        df_proteins_b = df_proteins_b.sort_values("Health", ascending=False)
+        protein_b_list = df_proteins_b.reset_index
+        protein_b_list = df_proteins_b["Item"].tolist()
+
+        df_veggies = pd.read_excel('food_bank.xlsx', sheet_name='veggies')
+        df_veggies = df_veggies.sort_values("Health", ascending=False)
+        veggies_list = df_proteins_b.reset_index
+        veggies_list = df_veggies["Item"].tolist()
+
+        df_veggies_b = pd.read_excel('food_bank.xlsx', sheet_name='veggies_b')
+        df_veggies_b = df_veggies_b.sort_values("Health", ascending=False)
+        veggies_b_list = df_veggies_b.reset_index
+        veggies_b_list = df_veggies_b["Item"].tolist()
+
+        df_carbs = pd.read_excel('food_bank.xlsx', sheet_name='carbs')
+        df_carbs = df_carbs.sort_values("Health", ascending=False)
+        carbs_list = df_carbs.reset_index
+        carbs_list = df_carbs["Item"].tolist()
+
+        df_carbs_b = pd.read_excel('food_bank.xlsx', sheet_name='carbs_b')
+        df_carbs_b = df_carbs_b.sort_values("Health", ascending=False)
+        carbs_b_list = df_carbs_b.reset_index
+        carbs_b_list = df_carbs_b["Item"].tolist()
+
+        df_flavor = pd.read_excel('food_bank.xlsx', sheet_name='flavor')
+        flavor_list = df_flavor.values.tolist()
+
+        def suggest_breakfast():
+            meat = str(random.choice(protein_b_list[0:2]))
+            veg = str(random.choice(veggies_b_list[0:4]))
+            carb = str(random.choice(carbs_b_list[0:4]))
+            print("You could try " + meat + " with " + veg + " and " + carb)
+
+        def suggest_lunch():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list[0:4]))
+            veg2 = str(random.choice(veggies_list[0:4]))
+            carb = str(random.choice(carbs_list[0:4]))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        def suggest_dinner():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        print("""
+                What meal would you like to optimize?
+                    1) Breakfast
+                    2) Lunch
+                    3) Dinner
+                """)
+        choice5 = int(input())
+        if choice5 == 1:
+            print("You have chosen Breakfast.")
+            suggest_breakfast()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":  # used to create loop for new suggestions
+                print("")
+                suggest_breakfast()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 2:
+            print("You chosen Lunch.")
+            suggest_lunch()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_lunch()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 3:
+            print("You have chosen Dinner.")
+            suggest_dinner()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_dinner()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        else:
+            print("You have entered invalid input!")
+
+    def optimize_price():
+        df_proteins = pd.read_excel('food_bank.xlsx', sheet_name='proteins')  # used to import from excel sheet
+        df_proteins = df_proteins.sort_values("Price")
+        protein_list = df_proteins.reset_index
+        protein_list = df_proteins["Item"].tolist()
+
+        df_proteins_b = pd.read_excel('food_bank.xlsx', sheet_name='proteins_b')
+        df_proteins_b = df_proteins_b.sort_values("Price")
+        protein_b_list = df_proteins_b.reset_index
+        protein_b_list = df_proteins_b["Item"].tolist()
+
+        df_veggies = pd.read_excel('food_bank.xlsx', sheet_name='veggies')
+        df_veggies = df_veggies.sort_values("Price")
+        veggies_list = df_proteins_b.reset_index
+        veggies_list = df_veggies["Item"].tolist()
+
+        df_veggies_b = pd.read_excel('food_bank.xlsx', sheet_name='veggies_b')
+        df_veggies_b = df_veggies_b.sort_values("Price")
+        veggies_b_list = df_veggies_b.reset_index
+        veggies_b_list = df_veggies_b["Item"].tolist()
+
+        df_carbs = pd.read_excel('food_bank.xlsx', sheet_name='carbs')
+        df_carbs = df_carbs.sort_values("Price")
+        carbs_list = df_carbs.reset_index
+        carbs_list = df_carbs["Item"].tolist()
+
+        df_carbs_b = pd.read_excel('food_bank.xlsx', sheet_name='carbs_b')
+        df_carbs_b = df_carbs_b.sort_values("Price")
+        carbs_b_list = df_carbs_b.reset_index
+        carbs_b_list = df_carbs_b["Item"].tolist()
+
+        df_flavor = pd.read_excel('food_bank.xlsx', sheet_name='flavor')
+        flavor_list = df_flavor.values.tolist()
+
+        def suggest_breakfast():
+            meat = str(random.choice(protein_b_list[0:3]))
+            veg = str(random.choice(veggies_b_list[0:4]))
+            carb = str(random.choice(carbs_b_list[0:4]))
+            print("You could try " + meat + " with " + veg + " and " + carb)
+
+        def suggest_lunch():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list[0:4]))
+            veg2 = str(random.choice(veggies_list[0:4]))
+            carb = str(random.choice(carbs_list[0:4]))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        def suggest_dinner():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        print("""
+                        What meal would you like to optimize?
+                            1) Breakfast
+                            2) Lunch
+                            3) Dinner
+                        """)
+        choice5 = int(input())
+        if choice5 == 1:
+            print("You have chosen Breakfast.")
+            suggest_breakfast()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":  # used to create loop for new suggestions
+                print("")
+                suggest_breakfast()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 2:
+            print("You chosen Lunch.")
+            suggest_lunch()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_lunch()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 3:
+            print("You have chosen Dinner.")
+            suggest_dinner()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_dinner()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        else:
+            print("You have entered invalid input!")
+
+
+    def optimize_taste():
+        df_proteins = pd.read_excel('food_bank.xlsx', sheet_name='proteins')  # used to import from excel sheet
+        df_proteins = df_proteins.sort_values("Taste", ascending=False)
+        protein_list = df_proteins.reset_index
+        protein_list = df_proteins["Item"].tolist()
+
+        df_proteins_b = pd.read_excel('food_bank.xlsx', sheet_name='proteins_b')
+        df_proteins_b = df_proteins_b.sort_values("Taste", ascending=False)
+        protein_b_list = df_proteins_b.reset_index
+        protein_b_list = df_proteins_b["Item"].tolist()
+
+        df_veggies = pd.read_excel('food_bank.xlsx', sheet_name='veggies')
+        df_veggies = df_veggies.sort_values("Taste", ascending=False)
+        veggies_list = df_proteins_b.reset_index
+        veggies_list = df_veggies["Item"].tolist()
+
+        df_veggies_b = pd.read_excel('food_bank.xlsx', sheet_name='veggies_b')
+        df_veggies_b = df_veggies_b.sort_values("Taste", ascending=False)
+        veggies_b_list = df_veggies_b.reset_index
+        veggies_b_list = df_veggies_b["Item"].tolist()
+
+        df_carbs = pd.read_excel('food_bank.xlsx', sheet_name='carbs')
+        df_carbs = df_carbs.sort_values("Taste", ascending=False)
+        carbs_list = df_carbs.reset_index
+        carbs_list = df_carbs["Item"].tolist()
+
+        df_carbs_b = pd.read_excel('food_bank.xlsx', sheet_name='carbs_b')
+        df_carbs_b = df_carbs_b.sort_values("Taste", ascending=False)
+        carbs_b_list = df_carbs_b.reset_index
+        carbs_b_list = df_carbs_b["Item"].tolist()
+
+        df_flavor = pd.read_excel('food_bank.xlsx', sheet_name='flavor')
+        flavor_list = df_flavor.values.tolist()
+
+        def suggest_breakfast():
+            meat = str(random.choice(protein_b_list[0:2]))
+            veg = str(random.choice(veggies_b_list[0:4]))
+            carb = str(random.choice(carbs_b_list[0:4]))
+            print("You could try " + meat + " with " + veg + " and " + carb)
+
+        def suggest_lunch():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list[0:4]))
+            veg2 = str(random.choice(veggies_list[0:4]))
+            carb = str(random.choice(carbs_list[0:4]))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        def suggest_dinner():
+            meat = str(random.choice(protein_list[0:4]))
+            veg1 = str(random.choice(veggies_list))
+            veg2 = str(random.choice(veggies_list))
+            carb = str(random.choice(carbs_list))
+            flavor = str(random.choice(flavor_list))[2:-2]
+            print("You could try " + flavor + " " + meat + " with " + veg1 + " + " + veg2 + " and " + carb)
+
+        print("""
+                        What meal would you like to optimize?
+                            1) Breakfast
+                            2) Lunch
+                            3) Dinner
+                        """)
+        choice5 = int(input())
+        if choice5 == 1:
+            print("You have chosen Breakfast.")
+            suggest_breakfast()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":  # used to create loop for new suggestions
+                print("")
+                suggest_breakfast()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 2:
+            print("You chosen Lunch.")
+            suggest_lunch()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_lunch()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        elif choice5 == 3:
+            print("You have chosen Dinner.")
+            suggest_dinner()
+            redo = input("Would you like a different suggestion? (y/n) ")
+            print("")
+            while redo == "y":
+                print("")
+                suggest_dinner()
+                redo = input("Would you like a different suggestion? (y/n) ")
+        else:
+            print("You have entered invalid input!")
+
+
+    print("""
+        What would you like to optimize for?
+            1) Health
+            2) Price
+            3) Tastyness
+        """)
+    choice4 = int(input())
+    if choice4 == 1:
+        print("You have chosen to optimize for Health.")
+        optimize_health()
+        pass
+    elif choice4 == 2:
+        print("You have chosen to optimize for Price.")
+        optimize_price()
+        pass
+    elif choice4 == 3:
+        print("You have chosen to optimize for Tastyness.")
+        optimize_taste()
+        pass
+    else:
+        print("You have entered an invalid input!")
+
+
+def generate_restaurant():
+    df_restaurants = pd.read_excel('food_bank.xlsx', sheet_name='restaurants')
+    restaurant_list = df_restaurants.values.tolist()
+
+    restaurant = str(random.choice(restaurant_list))[2:-2]
+    print("You could try food from: " + str(restaurant))
+    print("")
+    redo = input("Would you like a different suggestion? (y/n) ")
+    while redo == "y":
+        print("")
+        restaurant = str(random.choice(restaurant_list))[2:-2]
+        print("You could try food from: " + str(restaurant))
+        print("")
+        redo = input("Would you like a different suggestion? (y/n) ")
+
+
+
+if __name__ == '__main__':
+    main()
+
+
